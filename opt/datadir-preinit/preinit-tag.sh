@@ -21,14 +21,14 @@ cleanup() {
     docker-compose rm --force -v --all
   fi
 
-  if [[ ! -z "${PREBUILDTAG-}" ]]
+  if [[ ! -z "${PREBUILDTAG-}" && ! -z $(docker images -q "${PREBUILDTAG}") ]]
     then
     # We should only keep this around until we have done a docker push.
     echo "Removing temporary datadir container"
     docker rmi "${PREBUILDTAG}"
   fi
 
-  if [[ ! -z "${TAG-}" ]]
+  if [[ ! -z "${TAG-}" && ! -z $(docker images -q "${TAG}") ]]
     then
     # We should only keep this around until docker-compose run has completed
     # and the datadir has been initialized.
@@ -129,7 +129,9 @@ echo "Initializing container with dbdump"
 docker-compose rm --force -v --all
 docker-compose run preinitdb
 
-# The datadir has now been initialized, remove the dbdump image to free up some space
+# The datadir has now been initialized, clear out all data we don't need.
+echo "Removing temporary dbdata container and datadump image"
+docker-compose rm --force -v --all
 docker rmi "reload/db-data:${TAG}"
 
 
