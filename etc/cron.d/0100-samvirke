@@ -1,0 +1,1 @@
+0 1 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh samvirke-latest) 2>&1 | /usr/bin/logger -t datadir-preinit:samvirke
