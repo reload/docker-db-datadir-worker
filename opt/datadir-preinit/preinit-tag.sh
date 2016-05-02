@@ -122,7 +122,11 @@ fi
 rm docker-compose.yml.tmp.bak
 mv docker-compose.yml.tmp docker-compose.yml
 
+# Init-script that will make the container exit after importing the dump.
 cp "${SCRIPTDIR}/init-only-entrypoint.sh" "${INTERNAL_VOLUME_PATH}/"
+
+# Custom mysql-configuration.
+cp "${SCRIPTDIR}/my.cnf" "${INTERNAL_VOLUME_PATH}/"
 
 # Run up a mariadb container with a sql-dump.
 echo "Initializing container with dbdump"
