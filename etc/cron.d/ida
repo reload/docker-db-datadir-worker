@@ -1,0 +1,1 @@
+0 6 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh ida-latest ../jobs/ida/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:ida

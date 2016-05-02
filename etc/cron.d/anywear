@@ -1,0 +1,1 @@
+00 4 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh anywear-latest ../jobs/anywear/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:anywear

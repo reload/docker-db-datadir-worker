@@ -1,0 +1,18 @@
+preinitdb:
+  container_name: preinitdb
+  image: mariadb:10
+  volumes_from:
+    - preinitdb-data
+  environment:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: db
+    MYSQL_USER: db
+    MYSQL_PASSWORD: db
+  volumes:
+    - '{{EXTERNAL_VOLUME_PATH}}/init-only-entrypoint.sh:/init-only-entrypoint.sh:ro'
+    - '{{EXTERNAL_VOLUME_PATH}}/datadir:/var/lib/mysql'
+    {{INITSCRIPT}}
+  entrypoint: /init-only-entrypoint.sh
+  command: mysqld
+preinitdb-data:
+  image: reload/db-data:{{TAG}}
