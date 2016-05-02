@@ -18,4 +18,3 @@ RUN set -x && \
 
 COPY etc/ /etc/
 COPY opt/ /opt/
-COPY root/ /root/
