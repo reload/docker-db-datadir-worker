@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Initializes a mariadb container with a databasedump and extracts its datadir 
+# Initializes a mariadb container with a databasedump and extracts its datadir
 # into a seperate container-image.
 
 set -euo pipefail
@@ -23,14 +23,22 @@ cleanup() {
 
   if [[ ! -z "${PREBUILDTAG-}" ]]
     then
-    # We should only keep this around until we have done a docker push
+    # We should only keep this around until we have done a docker push.
     echo "Removing temporary datadir container"
     docker rmi "${PREBUILDTAG}"
   fi
 
+  if [[ ! -z "${TAG-}" ]]
+    then
+    # We should only keep this around until docker-compose run has completed
+    # and the datadir has been initialized.
+    echo "Removing datadump image reload/db-data:${TAG}"
+    docker rmi "reload/db-data:${TAG}"
+  fi
+
   if [[ ! -z "${INTERNAL_VOLUME_PATH-}" && -d "${INTERNAL_VOLUME_PATH}" ]]
     then
-    # We should only keep this around until we have done a docker push
+    # We should only keep this around until we have done a docker push.
     echo "Removing internal volume directory"
     sudo rm -fr "${INTERNAL_VOLUME_PATH}"
   fi
@@ -100,12 +108,15 @@ rm -f docker-compose.yml
 /usr/bin/env sed -i.bak "s%{{EXTERNAL_VOLUME_PATH}}%${EXTERNAL_VOLUME_PATH}%g" docker-compose.yml.tmp
 rm docker-compose.yml.tmp.bak
 
+# Pick up a init-script (ie. sql that should be run after the databasedump has
+# been imported) specified on the commandline, and add it to docker-compose.yml.
 if [ ! -z $INITSCRIPT ]
   then
     cp $INITSCRIPT "${INTERNAL_VOLUME_PATH}/900-init.sql"
     INITSCRIPTCONFIG="- '${EXTERNAL_VOLUME_PATH}/900-init.sql:/docker-entrypoint-initdb.d/900-init.sql'"
      /usr/bin/env sed -i.bak "s%{{INITSCRIPT}}%${INITSCRIPTCONFIG}%g" docker-compose.yml.tmp
   else
+    # No init-script found, remove the placeholder from docker-compose.yml.
     /usr/bin/env sed -i.bak "s/{{INITSCRIPT}}//g" docker-compose.yml.tmp
 fi
 rm docker-compose.yml.tmp.bak
@@ -118,6 +129,11 @@ echo "Initializing container with dbdump"
 docker-compose rm --force -v --all
 docker-compose run preinitdb
 
+# The datadir has now been initialized, remove the dbdump image to free up some space
+docker rmi "reload/db-data:${TAG}"
+
+
+# Prepare to run the docker build that will create an image with the datadir.
 cp Dockerfile "${INTERNAL_VOLUME_PATH}/Dockerfile"
 # Build the pre-init data-container, use same tag as the sql-dump image.
 PREBUILDTAG="reload/db-datadir:${TAG}"
@@ -127,4 +143,5 @@ echo "Building ${PREBUILDTAG}"
 sudo docker build --tag "${PREBUILDTAG}" -f "${INTERNAL_VOLUME_PATH}/Dockerfile" "${INTERNAL_VOLUME_PATH}"
 echo "Pushing ${PREBUILDTAG}"
 docker push "${PREBUILDTAG}"
+docker rmi "${PREBUILDTAG}"
 
