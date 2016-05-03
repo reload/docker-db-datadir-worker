@@ -6,3 +6,19 @@ INSERT IGNORE INTO `system` VALUES ('sites/all/modules/development/stage_file_pr
 UPDATE `system` SET `status` = 1 WHERE `name` = 'stage_file_proxy';
 -- Set admin password to admin.
 UPDATE `users` SET `pass` = '$S$DnyhybQ1LS.tk1SaVb2M67Fo8Hba/2eSYAmXNlTOwMN0I.ionzAq', `name` = 'admin', `status` = 1 WHERE `uid` = 1;
+
+-- Setup saml
+DROP TABLE IF EXISTS `LoggedInUser`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `LoggedInUser` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `commonName` varchar(255) DEFAULT NULL,
+  `cpr` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `pid` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `sessionID` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `rid` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `cvr` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `timestamp` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
