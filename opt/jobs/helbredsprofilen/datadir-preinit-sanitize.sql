@@ -5,4 +5,4 @@ INSERT IGNORE INTO `system` VALUES ('sites/all/modules/development/stage_file_pr
 -- Generally make sure stage_file_proxy is enabled.
 UPDATE `system` SET `status` = 1 WHERE `name` = 'stage_file_proxy';
 -- Set admin password to admin.
-UPDATE `users` SET `pass` = '$S$DnyhybQ1LS.tk1SaVb2M67Fo8Hba/2eSYAmXNlTOwMN0I.ionzAq', `name` = 'admin' WHERE `uid` = 1;
+UPDATE `users` SET `pass` = '$S$DnyhybQ1LS.tk1SaVb2M67Fo8Hba/2eSYAmXNlTOwMN0I.ionzAq', `name` = 'admin', `status` = 1 WHERE `uid` = 1;
