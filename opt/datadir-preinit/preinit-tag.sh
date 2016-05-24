@@ -21,19 +21,19 @@ cleanup() {
     docker-compose rm --force -v --all
   fi
 
-  if [[ ! -z "${PREBUILDTAG-}" && ! -z $(docker images -q "${PREBUILDTAG}") ]]
+  if [[ ! -z "${DATADIR_IMAGE_DESTINATION-}" && ! -z $(docker images -q "${DATADIR_IMAGE_DESTINATION}") ]]
     then
     # We should only keep this around until we have done a docker push.
     echo "Removing temporary datadir container"
-    docker rmi "${PREBUILDTAG}"
+    docker rmi "${DATADIR_IMAGE_DESTINATION}"
   fi
 
-  if [[ ! -z "${TAG-}" && ! -z $(docker images -q "${TAG}") ]]
+  if [[ ! -z "${DUMP_IMAGE_SOURCE-}" && ! -z $(docker images -q "${DUMP_IMAGE_SOURCE}") ]]
     then
     # We should only keep this around until docker-compose run has completed
     # and the datadir has been initialized.
-    echo "Removing datadump image reload/db-data:${TAG}"
-    docker rmi "reload/db-data:${TAG}"
+    echo "Removing datadump image ${DUMP_IMAGE_SOURCE}"
+    docker rmi "${DUMP_IMAGE_SOURCE}"
   fi
 
   if [[ ! -z "${INTERNAL_VOLUME_PATH-}" && -d "${INTERNAL_VOLUME_PATH}" ]]
@@ -47,27 +47,23 @@ cleanup() {
 trap error ERR
 trap cleanup EXIT
 
-if [ $# -eq 0 ]
+if [ $# -lt 2 ]
   then
-    echo "Syntax: ${0} <db-dump-tag> [init-sql-script-path]"
+    echo "Syntax: ${0} <source user/repo:tag> <destination user/repo:tag> [init-sql-script-path]"
     exit
 fi
 
-# Tag to use when pulling the dbdump image.
-if [ $# -gt 0 ]
-  then
-  TAG=$1
-fi
-
+DATADIR_IMAGE_DESTINATION=$2
+DUMP_IMAGE_SOURCE=$1
 # Let the user specify a init-script to be run after the db-import.
-if [ $# -gt 1 ]
+if [ $# -gt 2 ]
   then
-    if [[ ! -e $2 ]]
+    if [[ ! -e $3 ]]
       then
-      echo "Could not find init-script $2"
+      echo "Could not find init-script $3"
       exit
     fi
-    INITSCRIPT=$2
+    INITSCRIPT=$3
   else
     INITSCRIPT=''
 fi
@@ -94,7 +90,7 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "${SCRIPTDIR}"
 
 # Get the tag and make sure it is available as a dbdump image.
-docker pull "reload/db-data:${TAG}"
+docker pull "${DUMP_IMAGE_SOURCE}"
 
 # Clean out any existing datadir.
 # We need sudo as the datadir will contain files owned by mariadbs "mysql" user.
@@ -102,7 +98,7 @@ sudo rm -fr "${INTERNAL_VOLUME_PATH}/datadir"
 
 # Clear out any previously generated composer-file and generate a new.
 rm -f docker-compose.yml
-/usr/bin/env sed "s/{{TAG}}/${TAG}/g" docker-compose.template.yml > docker-compose.yml.tmp
+/usr/bin/env sed "s%{{DUMP_IMAGE_SOURCE}}%${DUMP_IMAGE_SOURCE}%g" docker-compose.template.yml > docker-compose.yml.tmp
 # Volumes are mounted by the docker-deamon potentially running outside the current container
 # so make sure to use the external paths.
 /usr/bin/env sed -i.bak "s%{{EXTERNAL_VOLUME_PATH}}%${EXTERNAL_VOLUME_PATH}%g" docker-compose.yml.tmp
@@ -136,18 +132,16 @@ docker-compose run preinitdb
 # The datadir has now been initialized, clear out all data we don't need.
 echo "Removing temporary dbdata container and datadump image"
 docker-compose rm --force -v --all
-docker rmi "reload/db-data:${TAG}"
+docker rmi "${DUMP_IMAGE_SOURCE}"
 
 
 # Prepare to run the docker build that will create an image with the datadir.
 cp Dockerfile "${INTERNAL_VOLUME_PATH}/Dockerfile"
 # Build the pre-init data-container, use same tag as the sql-dump image.
-PREBUILDTAG="reload/db-datadir:${TAG}"
-echo "Building ${PREBUILDTAG}"
+echo "Building ${DATADIR_IMAGE_DESTINATION}"
 # Build using same tag as the one from dbdump.
 # We need sudo to access datadir.
-sudo docker build --tag "${PREBUILDTAG}" -f "${INTERNAL_VOLUME_PATH}/Dockerfile" "${INTERNAL_VOLUME_PATH}"
-echo "Pushing ${PREBUILDTAG}"
-docker push "${PREBUILDTAG}"
-docker rmi "${PREBUILDTAG}"
-
+sudo docker build --tag "${DATADIR_IMAGE_DESTINATION}" -f "${INTERNAL_VOLUME_PATH}/Dockerfile" "${INTERNAL_VOLUME_PATH}"
+echo "Pushing ${DATADIR_IMAGE_DESTINATION}"
+docker push "${DATADIR_IMAGE_DESTINATION}"
+docker rmi "${DATADIR_IMAGE_DESTINATION}"

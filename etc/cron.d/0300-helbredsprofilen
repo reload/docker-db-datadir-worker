@@ -1,1 +1,1 @@
-0 3 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh helbredsprofilen-latest ../jobs/helbredsprofilen/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:helbredsprofilen
+0 3 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh reload/helbredsprofilen:db-data reload/helbredsprofilen:db-datadir ../jobs/helbredsprofilen/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:helbredsprofilen

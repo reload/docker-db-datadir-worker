@@ -16,4 +16,4 @@ preinitdb:
   entrypoint: /init-only-entrypoint.sh
   command: mysqld
 preinitdb-data:
-  image: reload/db-data:{{TAG}}
+  image: {{DUMP_IMAGE_SOURCE}}
