@@ -68,6 +68,12 @@ if [ $# -gt 2 ]
     INITSCRIPT=''
 fi
 
+# Let the user override the base-image, if not overriden use an empty image
+if [[ -z "${BASE_IMAGE:-}" ]] 
+  then
+  BASE_IMAGE="tianon/true"
+fi
+
 # Support the case where the paths we give to docker has to be different from the local paths
 # Path we should give to docker build (ie the real path from the host-server running the docker deamon)
 EXTERNAL_VOLUME_BASE="${DATADIR_PREINIT_EXTERNAL_VOLUME-.}"
@@ -134,9 +140,9 @@ echo "Removing temporary dbdata container and datadump image"
 docker-compose rm --force -v --all
 docker rmi "${DUMP_IMAGE_SOURCE}"
 
-
 # Prepare to run the docker build that will create an image with the datadir.
-cp Dockerfile "${INTERNAL_VOLUME_PATH}/Dockerfile"
+/usr/bin/env sed "s%{{BASE_IMAGE}}%${BASE_IMAGE}%g" Dockerfile.template > "${INTERNAL_VOLUME_PATH}/Dockerfile"
+
 # Build the pre-init data-container, use same tag as the sql-dump image.
 echo "Building ${DATADIR_IMAGE_DESTINATION}"
 # Build using same tag as the one from dbdump.

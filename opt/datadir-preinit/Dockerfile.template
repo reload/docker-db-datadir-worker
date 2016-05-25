@@ -1,4 +1,4 @@
-FROM tianon/true
+FROM {{BASE_IMAGE}}
 MAINTAINER Mads H. Danquah <mads@reload.dk>
 
 LABEL Description="Pre-initialized mariadb datadir"
