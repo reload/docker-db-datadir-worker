@@ -1,0 +1,1 @@
+30 4 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && BASE_IMAGE=mariadb:10 ./preinit-tag.sh reload/spejderneslejr:db-data-test reload/spejderneslejr:mariadb-10-test ../jobs/spejderneslejr/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:spejderneslejr
