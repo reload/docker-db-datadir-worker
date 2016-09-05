@@ -14,7 +14,8 @@ RUN set -x && \
     apt-get clean -y -q && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
     curl -L https://github.com/docker/compose/releases/download/1.7.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose && \
-    chmod +x /usr/local/bin/docker-compose
-
+    chmod +x /usr/local/bin/docker-compose && \
+    echo "Europe/Copenhagen" > /etc/timezone && \
+    dpkg-reconfigure -f noninteractive tzdata
 COPY etc/ /etc/
 COPY opt/ /opt/
