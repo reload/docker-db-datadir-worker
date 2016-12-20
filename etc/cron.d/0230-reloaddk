@@ -1,1 +1,0 @@
-30 2 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh reload/db-data:reloaddk-latest reload/db-datadir:reloaddk-latest ../jobs/general-d8/reset-admin-pass.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:reloaddk
