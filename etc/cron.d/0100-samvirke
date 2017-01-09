@@ -1,1 +1,1 @@
-0 1 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh reload/db-data:samvirke-latest reload/db-datadir:samvirke-latest) 2>&1 | /usr/bin/logger -t datadir-preinit:samvirke
+0 1 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh reload/db-data:samvirke-latest reload/db-datadir:samvirke-latest ../jobs/general-d8/reset-admin-pass.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:samvirke
