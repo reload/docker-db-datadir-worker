@@ -1,0 +1,11 @@
+# INSERT PROJECT DESCRIPTION HERE
+# Delete the following comments after carrying out the steps.
+# - Rename this file <HH><mm>-<projectname> eg 0234-reloaddk and edit it.
+# - Uncomment the cron-config line and project-name variable at the end of the
+#   file
+# - Set the project-name (make sure to use the name used in th db-data tag)
+# - Set the cron-timestamp to match the filename eg.  34 2 * * * for the example
+#   above
+#PROJECT_NAME=<set projectname here>
+#34 2 * * * root (/opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-master reload/db-datadir:$PROJECT_NAME-master ../jobs/general-d8/reset-admin-pass.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:$PROJECT_NAME
+# MAKE SURE TO INCLUDE A TRAILING NEWLINE AFTER THIS COMMENT, LEAVE THIS COMMENT
