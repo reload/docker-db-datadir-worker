@@ -4,7 +4,7 @@
 
 set -euo pipefail
 IFS=$'\n\t'
-
+PATH="$HOME/bin:/usr/local/bin:/usr/local/sbin:$PATH";
 # In case of errors, just write out that we stopped due to an error.
 # Cleanup is performed subsequently by the cleanup() trap.
 error() {
@@ -53,6 +53,10 @@ if [ $# -lt 2 ]
     exit
 fi
 
+# Make sure our current directory is the scriptdir.
+SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "${SCRIPTDIR}"
+
 DATADIR_IMAGE_DESTINATION=$2
 DUMP_IMAGE_SOURCE=$1
 # Let the user specify a init-script to be run after the db-import.
@@ -90,10 +94,6 @@ if [[ -e "${INTERNAL_VOLUME_PATH}" ]]
   sudo rm -fr "${INTERNAL_VOLUME_PATH}"
 fi
 mkdir "${INTERNAL_VOLUME_PATH}"
-
-# Make sure our current directory is the scriptdir.
-SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd "${SCRIPTDIR}"
 
 # Get the tag and make sure it is available as a dbdump image.
 docker pull "${DUMP_IMAGE_SOURCE}"
