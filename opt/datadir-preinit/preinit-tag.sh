@@ -159,14 +159,15 @@ echo "Removing temporary dbdata container and datadump image"
 docker-compose rm --force -v --all
 docker rmi "${DUMP_IMAGE_SOURCE}"
 
+# Prepare to run the docker build that will create an image with the datadir.
 # If we're not using volumes, use a Dockerfile that places the datadir in an alternate location.
 if [[ "$NO_VOLUME" == 1 ]]
   then
-    /usr/bin/env sed "s%{{BASE_IMAGE}}%${BASE_IMAGE}%g" Dockerfile-no-volume.template > "${INTERNAL_VOLUME_PATH}/Dockerfile"
+    DOCKERFILE_TEMPLATE="Dockerfile-no-volume.template"  
   else
-    # Prepare to run the docker build that will create an image with the datadir.
-    /usr/bin/env sed "s%{{BASE_IMAGE}}%${BASE_IMAGE}%g" Dockerfile.template > "${INTERNAL_VOLUME_PATH}/Dockerfile"
+    DOCKERFILE_TEMPLATE="Dockerfile.template"
 fi
+/usr/bin/env sed "s%{{BASE_IMAGE}}%${BASE_IMAGE}%g" "${DOCKERFILE_TEMPLATE}" > "${INTERNAL_VOLUME_PATH}/Dockerfile"
 
 # Build the pre-init data-container, use same tag as the sql-dump image.
 echo "Building ${DATADIR_IMAGE_DESTINATION}"
