@@ -9,7 +9,7 @@ preinitdb:
     MYSQL_USER: db
     MYSQL_PASSWORD: db
   volumes:
-    - '{{EXTERNAL_VOLUME_PATH}}/my.cnf:/etc/mysql/conf.d/my.cnf:ro'
+    - '{{EXTERNAL_VOLUME_PATH}}/mysql-config/my.cnf:/etc/mysql/conf.d/my.cnf:ro'
     - '{{EXTERNAL_VOLUME_PATH}}/init-only-entrypoint.sh:/init-only-entrypoint.sh:ro'
     - '{{EXTERNAL_VOLUME_PATH}}/datadir:/var/lib/mysql'
     {{INITSCRIPT}}

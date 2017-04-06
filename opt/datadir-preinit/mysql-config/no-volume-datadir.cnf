@@ -1,0 +1,7 @@
+[mysqld]
+# Switch to using a datadir that is not exported as a volume.
+# This will make the database run a bit slower for many writes, but will 
+# support snapshotting and halve the storage-requirements for dev.
+# Should never-ever be used in production as the datadir will disseapar as
+# when the container is shut down.
+datadir=/var/lib/mysql-no-volume

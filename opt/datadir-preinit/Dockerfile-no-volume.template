@@ -1,0 +1,7 @@
+FROM {{BASE_IMAGE}}
+
+LABEL Description="Pre-initialized mariadb datadir, datadir is placed in a non-volumed /var/lib/mysql-no-volume"
+
+ADD datadir /var/lib/mysql-no-volume
+
+COPY mysql-config/no-volume-datadir.cnf /etc/mysql/conf.d/
