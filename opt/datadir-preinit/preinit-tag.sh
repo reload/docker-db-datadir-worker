@@ -24,7 +24,7 @@ cleanup() {
   if [[ ! -z "${DATADIR_IMAGE_DESTINATION-}" && ! -z $(docker images -q "${DATADIR_IMAGE_DESTINATION}") ]]
     then
     # We should only keep this around until we have done a docker push.
-    echo "Removing temporary datadir container"
+    echo "Removing datadir container"
     docker rmi "${DATADIR_IMAGE_DESTINATION}"
   fi
 
@@ -73,9 +73,26 @@ if [ $# -gt 2 ]
 fi
 
 # Let the user override the base-image, if not overriden use an empty image
+# This is only applicable for volumed datadir images.
 if [[ -z "${BASE_IMAGE:-}" ]] 
   then
   BASE_IMAGE="tianon/true"
+fi
+
+# Let the user request a non-volumned datadir.
+# If set to 1 we'll create a complete mariadb image including datadir, placed
+# outside a volume. This will let the image start much quicker and save local
+# storage as the volume does not have to be created during container startup.
+if [[ -z "${FULL_DB_IMAGE:-}" ]] 
+  then
+    FULL_DB_IMAGE=0
+  else
+    # We could support a different base-image here, but until that rather
+    # complex situation arrives, we'll keep this tiny bit of extra 
+    # complexity out of our quite complex setup here.
+    BASE_IMAGE="mariadb:10"
+    DATADIR_IMAGE_DESTINATION="${DATADIR_IMAGE_DESTINATION}-fulldb"
+    FULL_DB_IMAGE=1
 fi
 
 # Support the case where the paths we give to docker has to be different from the local paths
@@ -122,13 +139,15 @@ if [ ! -z $INITSCRIPT ]
     /usr/bin/env sed -i.bak "s/{{INITSCRIPT}}//g" docker-compose.yml.tmp
 fi
 rm docker-compose.yml.tmp.bak
+
+# All replacements done
 mv docker-compose.yml.tmp docker-compose.yml
 
 # Init-script that will make the container exit after importing the dump.
 cp "${SCRIPTDIR}/init-only-entrypoint.sh" "${INTERNAL_VOLUME_PATH}/"
 
-# Custom mysql-configuration.
-cp "${SCRIPTDIR}/my.cnf" "${INTERNAL_VOLUME_PATH}/"
+# Copy mysql configuration into the dir we're going to use for compose.
+cp -r "${SCRIPTDIR}/mysql-config" "${INTERNAL_VOLUME_PATH}/"
 
 # Run up a mariadb container with a sql-dump.
 echo "Initializing container with dbdump"
@@ -141,7 +160,14 @@ docker-compose rm --force -v --all
 docker rmi "${DUMP_IMAGE_SOURCE}"
 
 # Prepare to run the docker build that will create an image with the datadir.
-/usr/bin/env sed "s%{{BASE_IMAGE}}%${BASE_IMAGE}%g" Dockerfile.template > "${INTERNAL_VOLUME_PATH}/Dockerfile"
+# If we're not using volumes, use a Dockerfile that places the datadir in an alternate location.
+if [[ "$FULL_DB_IMAGE" == 1 ]]
+  then
+    DOCKERFILE_TEMPLATE="Dockerfile-no-volume.template"  
+  else
+    DOCKERFILE_TEMPLATE="Dockerfile.template"
+fi
+/usr/bin/env sed "s%{{BASE_IMAGE}}%${BASE_IMAGE}%g" "${DOCKERFILE_TEMPLATE}" > "${INTERNAL_VOLUME_PATH}/Dockerfile"
 
 # Build the pre-init data-container, use same tag as the sql-dump image.
 echo "Building ${DATADIR_IMAGE_DESTINATION}"
