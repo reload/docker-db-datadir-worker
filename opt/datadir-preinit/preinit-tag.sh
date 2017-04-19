@@ -83,16 +83,16 @@ fi
 # If set to 1 we'll create a complete mariadb image including datadir, placed
 # outside a volume. This will let the image start much quicker and save local
 # storage as the volume does not have to be created during container startup.
-if [[ -z "${NO_VOLUME:-}" ]] 
+if [[ -z "${FULL_DB_IMAGE:-}" ]] 
   then
-    NO_VOLUME=0
+    FULL_DB_IMAGE=0
   else
     # We could support a different base-image here, but until that rather
     # complex situation arrives, we'll keep this tiny bit of extra 
     # complexity out of our quite complex setup here.
     BASE_IMAGE="mariadb:10"
-    DATADIR_IMAGE_DESTINATION="${DATADIR_IMAGE_DESTINATION}-novol"
-    NO_VOLUME=1
+    DATADIR_IMAGE_DESTINATION="${DATADIR_IMAGE_DESTINATION}-fulldb"
+    FULL_DB_IMAGE=1
 fi
 
 # Support the case where the paths we give to docker has to be different from the local paths
@@ -161,7 +161,7 @@ docker rmi "${DUMP_IMAGE_SOURCE}"
 
 # Prepare to run the docker build that will create an image with the datadir.
 # If we're not using volumes, use a Dockerfile that places the datadir in an alternate location.
-if [[ "$NO_VOLUME" == 1 ]]
+if [[ "$FULL_DB_IMAGE" == 1 ]]
   then
     DOCKERFILE_TEMPLATE="Dockerfile-no-volume.template"  
   else

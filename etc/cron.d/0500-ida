@@ -1,1 +1,1 @@
-0 5 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && NO_VOLUME=1 ./preinit-tag.sh reload/db-data:ida-latest reload/db-datadir:ida-latest ../jobs/ida/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:ida
+0 5 * * * root time (. /etc/container_environment.sh && cd /opt/datadir-preinit && FULL_DB_IMAGE=1 ./preinit-tag.sh reload/db-data:ida-latest reload/db-datadir:ida-latest ../jobs/ida/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:ida
