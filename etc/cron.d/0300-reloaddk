@@ -1,0 +1,2 @@
+# Dump is made 2:30
+00 3 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh reload/db-data:reloaddk-latest reload/db-datadir:reloaddk-latest ../jobs/general-d8/reset-admin-pass.sql && FULL_DB_IMAGE=1 ./preinit-tag.sh reload/db-data:reloaddk-latest reload/db-datadir:reloaddk-latest ../jobs/general-d8/reset-admin-pass.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:reloaddk
