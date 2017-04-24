@@ -5,6 +5,5 @@ INSERT IGNORE INTO `system` VALUES ('profiles/ida/modules/contrib/stage_file_pro
 -- Generally make sure stage_file_proxy is enabled.
 UPDATE `system` SET `status` = 1 WHERE `name` = 'stage_file_proxy';
 -- Set admin password to admin.
-UPDATE `users` SET `pass` = '$S$DnyhybQ1LS.tk1SaVb2M67Fo8Hba/2eSYAmXNlTOwMN0I.ionzAq' WHERE `uid` = 1;
+UPDATE `users` SET `pass` = '$S$DnyhybQ1LS.tk1SaVb2M67Fo8Hba/2eSYAmXNlTOwMN0I.ionzAq', `name` = 'admin' WHERE `uid` = 1;
 UPDATE `variable` SET `value` = 's:4:"/tmp";' WHERE `name` = 'file_temporary_path';
-
