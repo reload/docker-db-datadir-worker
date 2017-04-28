@@ -1,3 +1,0 @@
-# Dump is made 5:00
-# Notice, this dump is big so allow at 30 mins for it to complete.
-15 5 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && FULL_DB_IMAGE=1 ./preinit-tag.sh reload/db-data:ida-latest reload/db-datadir:ida-latest ../jobs/ida/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:ida

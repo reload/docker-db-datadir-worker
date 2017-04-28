@@ -1,0 +1,2 @@
+# Dump is made 5:30
+15 6 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh reload/db-data:spejderdk-latest reload/db-datadir:spejderdk-latest ../jobs/spejderdk/datadir-preinit-sanitize.sql && FULL_DB_IMAGE=1 ./preinit-tag.sh reload/db-data:spejderdk-latest reload/db-datadir:spejderdk-latest ../jobs/spejderdk/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:spejderdk
