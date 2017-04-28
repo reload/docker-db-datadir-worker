@@ -171,6 +171,21 @@ fi
 
 # Build the pre-init data-container, use same tag as the sql-dump image.
 echo "Building ${DATADIR_IMAGE_DESTINATION}"
+
+# Ok ... so ....  aufs (which will host the datadir for fulldb build) has this
+# "feature" where if you create a file/directory with a given ownership and
+# permission, subsequent permissions can only be narrower.
+# In other words, if we add, say, a datadir owned by root and then change the
+# ownership to mysql - strange things can happen when you then try to change
+# things. Specifically 
+# touch datadir/db/a && rm datadir/db/a will fail on the rm
+# So, to avoid all of that, we do something slightly crazy, we make everything
+# in the datadir world write/readable - make a mental note of never ever 
+# allowing this image to hit prod - and then add the datadir. This way we start
+# out with very liberal permissions which makes aufs happy.
+chmod -R a+rw "${INTERNAL_VOLUME_PATH}/datadir"
+find "${INTERNAL_VOLUME_PATH}/datadir" -type d -print0 | sudo xargs -0 chmod a+x
+
 # Build using same tag as the one from dbdump.
 # We need sudo to access datadir.
 sudo docker build --tag "${DATADIR_IMAGE_DESTINATION}" -f "${INTERNAL_VOLUME_PATH}/Dockerfile" "${INTERNAL_VOLUME_PATH}"
