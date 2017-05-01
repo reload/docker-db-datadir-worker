@@ -1,5 +1,5 @@
 -- Reset the admin-users password:
--- Set the reload users password to reload.
-UPDATE `users` SET `pass` = '$S$DhJhihnTzLM3UvzF4klWpYorIt7IJ1vzO9M0Fic1WL7MzNV19Xec' WHERE `uid` = 1 AND `name` = 'reload';
+-- Set uid 1 username/passsword to admin/admin
+UPDATE `users` SET `pass` = '$S$DnyhybQ1LS.tk1SaVb2M67Fo8Hba/2eSYAmXNlTOwMN0I.ionzAq', `name` = 'admin' WHERE `uid` = 1;
 UPDATE `variable` SET `value` = 's:4:"/tmp";' WHERE `name` = 'file_temporary_path';
 
