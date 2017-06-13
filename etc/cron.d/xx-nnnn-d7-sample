@@ -1,13 +1,12 @@
 # Delete the following comments after carrying out the steps.
-# - Rename this file <HH><mm>-<projectname> eg 0234-reloaddk and edit it.
-# - Uncomment the cron-config line and project-name variable at the end of the
-#   file
-# - Set the project-name (make sure to use the name used in the db-data tag)
+# - Copy this file to <HH><mm>-<projectname> eg 0234-reloaddk and edit it.
+# - Uncomment the PROJECT_NAME variable and cron config line below
+# - Set the PROJECT_NAME (must match db-data tag, without the '-latest' suffix)
 # - Fill out when the dump is made (see "Dump is made ..." below)
-# - Set the cron-timestamp to match the filename eg.  34 2 * * * for the example
+# - Set the cron-timestamp to match the filename eg. 34 2 * * * for the example
 #   above
-# - Remove anything above this line
+# - Now remove these comments (this line and anything above it)
 # Dump is made HH:MM
-#PROJECT_NAME=<set projectname here>
-#34 2 * * * root (/opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-master reload/db-datadir:$PROJECT_NAME-master /opt/jobs/general-d7/datadir-preinit-sanitize.sql && FULL_DB_IMAGE=1 /opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-master reload/db-datadir:$PROJECT_NAME-master /opt/jobs/general-d7/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:$PROJECT_NAME
+#PROJECT_NAME=<set-projectname-here>
+#34 2 * * * root (/opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-latest reload/db-datadir:$PROJECT_NAME-latest /opt/jobs/general-d7/datadir-preinit-sanitize.sql && FULL_DB_IMAGE=1 /opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-latest reload/db-datadir:$PROJECT_NAME-latest /opt/jobs/general-d7/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:$PROJECT_NAME
 # MAKE SURE TO INCLUDE A TRAILING NEWLINE AFTER THIS COMMENT, LEAVE THIS COMMENT
