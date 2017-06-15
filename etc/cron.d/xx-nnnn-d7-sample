@@ -8,5 +8,5 @@
 # - Now remove these comments (this line and anything above it)
 # Dump is made HH:MM
 #PROJECT_NAME=<set-projectname-here>
-#34 2 * * * root (/opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-latest reload/db-datadir:$PROJECT_NAME-latest /opt/jobs/general-d8/reset-admin-pass.sql && FULL_DB_IMAGE=1 /opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-latest reload/db-datadir:$PROJECT_NAME-latest /opt/jobs/general-d8/reset-admin-pass.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:$PROJECT_NAME
+#34 2 * * * root (/opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-latest reload/db-datadir:$PROJECT_NAME-latest /opt/jobs/general-d7/datadir-preinit-sanitize.sql && FULL_DB_IMAGE=1 /opt/datadir-preinit/preinit-tag.sh reload/db-data:$PROJECT_NAME-latest reload/db-datadir:$PROJECT_NAME-latest /opt/jobs/general-d7/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:$PROJECT_NAME
 # MAKE SURE TO INCLUDE A TRAILING NEWLINE AFTER THIS COMMENT, LEAVE THIS COMMENT

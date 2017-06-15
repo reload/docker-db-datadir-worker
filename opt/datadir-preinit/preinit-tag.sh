@@ -183,7 +183,7 @@ echo "Building ${DATADIR_IMAGE_DESTINATION}"
 # in the datadir world write/readable - make a mental note of never ever 
 # allowing this image to hit prod - and then add the datadir. This way we start
 # out with very liberal permissions which makes aufs happy.
-chmod -R a+rw "${INTERNAL_VOLUME_PATH}/datadir"
+sudo chmod -R a+rw "${INTERNAL_VOLUME_PATH}/datadir"
 find "${INTERNAL_VOLUME_PATH}/datadir" -type d -print0 | sudo xargs -0 chmod a+x
 
 # Build using same tag as the one from dbdump.
