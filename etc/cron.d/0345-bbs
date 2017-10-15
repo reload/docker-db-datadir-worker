@@ -1,0 +1,2 @@
+# Dump is made 3:15
+45 3 * * * root (. /etc/container_environment.sh && cd /opt/datadir-preinit && ./preinit-tag.sh reload/db-data:bbs-dev-latest reload/db-datadir:bbs-dev-latest ../jobs/general-d7/datadir-preinit-sanitize.sql && ./preinit-tag.sh reload/db-data:bbs-test-latest reload/db-datadir:bbs-test-latest ../jobs/general-d7/datadir-preinit-sanitize.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:bbs
