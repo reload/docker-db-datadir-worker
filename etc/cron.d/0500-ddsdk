@@ -1,0 +1,1 @@
+00 5 * * * root (cd /opt/datadir-preinit && ./preinit-tag.sh reload/db-data:ddsdk-latest reload/db-datadir:ddsdk-latest /opt/jobs/general-d8/reset-admin-pass.sql) 2>&1 | /usr/bin/logger -t datadir-preinit:ddsdk
