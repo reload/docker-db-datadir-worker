@@ -1,3 +1,7 @@
+# Obsoleted
+
+This project isn't used anymore, datadirs are made by https://github.com/reload/docker-db-datadir-builder triggered by https://github.com/reload/db-dump-worker these days.
+
 # docker-db-datadir-worker
 Pre-initializes datadirs for mariadb containers
 
